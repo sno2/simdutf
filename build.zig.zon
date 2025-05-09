@@ -1,0 +1,16 @@
+.{
+    .name = .simdutf,
+    .version = "7.0.0",
+    .fingerprint = 0x7494ad66a03a642, // Changing this has security and trust implications.
+    .minimum_zig_version = "0.14.0",
+    .dependencies = .{
+        .simdutf = .{
+            .url = "https://github.com/simdutf/simdutf/archive/refs/tags/v7.0.0.tar.gz",
+            .hash = "12205d6a134ea8f98ceab13a816e27d3477ff88c9511ba9d38aaf5514970698311d9",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+    },
+}
