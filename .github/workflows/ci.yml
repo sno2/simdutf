@@ -13,12 +13,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - uses: mlugg/setup-zig@v2
         with:
-          version: 0.14.0
+          version: latest
 
       - name: Check Formatting
         run: zig fmt --ast-check --check .
@@ -76,7 +75,7 @@ jobs:
 
       - uses: mlugg/setup-zig@v2
         with:
-          version: 0.14.0
+          version: latest
 
       - name: Test
         run: zig build test
