@@ -16,6 +16,7 @@ if [ "$latest" != "$ours" ]; then
         git push origin HEAD
         gh pr create \
             --title "update simdutf to $tag" \
+            --body "update simdutf to $tag" \
             --head "update-simdutf-${tag}" \
             --repo "$GITHUB_REPOSITORY"
     fi

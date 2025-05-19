@@ -19,4 +19,7 @@ jobs:
           version: latest
 
       - name: Sync simdutf
-        run: bash scripts/sync-simdutf.sh
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          bash scripts/sync-simdutf.sh
