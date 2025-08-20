@@ -9,11 +9,11 @@ pub fn build(b: *std.Build) !void {
 
     const upstream = b.dependency("simdutf", .{});
 
-    var flags: std.ArrayList([]const u8) = .init(b.allocator);
-    defer flags.deinit();
-    try flags.append("-std=c++17");
+    var flags: std.ArrayList([]const u8) = .empty;
+    defer flags.deinit(b.allocator);
+    try flags.append(b.allocator, "-std=c++17");
     if (fallback) {
-        try flags.append("-DSIMDUTF_IMPLEMENTATION_FALLBACK=1");
+        try flags.append(b.allocator, "-DSIMDUTF_IMPLEMENTATION_FALLBACK=1");
     }
     var query = target.query;
     if (target.result.cpu.arch.isX86()) {
@@ -29,7 +29,7 @@ pub fn build(b: *std.Build) !void {
         if (target.result.abi == .musl) {
             // musl had a patch to add these arch bits, but it seems to have been forgotten
             // https://www.openwall.com/lists/musl/2025/04/03/3
-            try flags.appendSlice(&.{
+            try flags.appendSlice(b.allocator, &.{
                 b.fmt("-DHWCAP_LOONGARCH_LSX={}", .{1 << 4}),
                 b.fmt("-DHWCAP_LOONGARCH_LASX={}", .{1 << 5}),
             });
