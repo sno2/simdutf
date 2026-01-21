@@ -1,12 +1,12 @@
 .{
     .name = .simdutf,
-    .version = "7.7.1",
+    .version = "8.0.0",
     .fingerprint = 0x7494ad66a03a642, // Changing this has security and trust implications.
     .minimum_zig_version = "0.15.0",
     .dependencies = .{
         .simdutf = .{
-            .url = "https://github.com/simdutf/simdutf/archive/refs/tags/v7.7.1.tar.gz",
-            .hash = "N-V-__8AAISxfgD8ADQNSpK3oQPlUcvbvbYBnFD7hPw_YYyv",
+            .url = "https://github.com/simdutf/simdutf/archive/refs/tags/v8.0.0.tar.gz",
+            .hash = "N-V-__8AAEZeggCoQ1xZM2OAPRQnlwiNxI38YLgZKtKHZF2Z",
         },
     },
     .paths = .{
