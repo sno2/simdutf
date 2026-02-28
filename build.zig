@@ -47,13 +47,13 @@ pub fn build(b: *std.Build) !void {
             .omit_frame_pointer = sanitize_thread,
         }),
     });
-    simdutf.addIncludePath(upstream.path("src"));
-    simdutf.addIncludePath(upstream.path("include"));
-    simdutf.installHeadersDirectory(upstream.path("include"), "", .{});
-    simdutf.addCSourceFile(.{
+    simdutf.root_module.addIncludePath(upstream.path("src"));
+    simdutf.root_module.addIncludePath(upstream.path("include"));
+    simdutf.root_module.addCSourceFile(.{
         .file = upstream.path("src/simdutf.cpp"),
         .flags = flags.items,
     });
+    simdutf.installHeadersDirectory(upstream.path("include"), "", .{});
     b.installArtifact(simdutf);
 
     const tests_reference = b.addLibrary(.{
@@ -66,9 +66,9 @@ pub fn build(b: *std.Build) !void {
             .omit_frame_pointer = sanitize_thread,
         }),
     });
-    tests_reference.linkLibrary(simdutf);
     tests_reference.installHeadersDirectory(upstream.path("tests/reference"), "tests/reference", .{});
-    tests_reference.addCSourceFiles(.{
+    tests_reference.root_module.linkLibrary(simdutf);
+    tests_reference.root_module.addCSourceFiles(.{
         .root = upstream.path("tests/reference"),
         .files = tests_reference_sources,
         .flags = &.{"-std=c++17"},
@@ -84,14 +84,14 @@ pub fn build(b: *std.Build) !void {
             .omit_frame_pointer = sanitize_thread,
         }),
     });
-    tests_helpers.linkLibrary(simdutf);
-    tests_helpers.linkLibrary(tests_reference);
-    tests_helpers.installHeadersDirectory(upstream.path("tests/helpers"), "tests/helpers", .{});
-    tests_helpers.addCSourceFiles(.{
+    tests_helpers.root_module.linkLibrary(simdutf);
+    tests_helpers.root_module.linkLibrary(tests_reference);
+    tests_helpers.root_module.addCSourceFiles(.{
         .root = upstream.path("tests/helpers"),
         .files = tests_helpers_sources,
-        .flags = &.{"-std=c++17"},
+        .flags = &.{ "-std=c++17", "-DSIMDUTF_TEST_LOOP_TRIALS=10", "-DSIMDUTF_BASE64_TEST_MAXLEN=100" },
     });
+    tests_helpers.installHeadersDirectory(upstream.path("tests/helpers"), "tests/helpers", .{});
 
     const test_step = b.step("test", "Run simdutf tests (no fuzz tests)");
     for (test_sources) |test_source| {
@@ -105,13 +105,13 @@ pub fn build(b: *std.Build) !void {
                 .omit_frame_pointer = sanitize_thread,
             }),
         });
-        test_exe.addCSourceFile(.{
+        test_exe.root_module.addCSourceFile(.{
             .file = upstream.path("tests").path(b, test_source),
-            .flags = &.{"-std=c++17"},
+            .flags = &.{ "-std=c++17", "-DSIMDUTF_TEST_LOOP_TRIALS=10", "-DSIMDUTF_BASE64_TEST_MAXLEN=100" },
         });
-        test_exe.linkLibrary(simdutf);
-        test_exe.linkLibrary(tests_helpers);
-        test_exe.linkLibrary(tests_reference);
+        test_exe.root_module.linkLibrary(simdutf);
+        test_exe.root_module.linkLibrary(tests_helpers);
+        test_exe.root_module.linkLibrary(tests_reference);
         const run_test = b.addRunArtifact(test_exe);
         run_test.expectExitCode(0);
         test_step.dependOn(&run_test.step);
